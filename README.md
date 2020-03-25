@@ -8,6 +8,7 @@ This also relies on data gathered by the [MIDAS Network], available here: https:
 
 ### TO DO
 
-- Add python scraper using `pd.read_html()` for automation and automate
+- <s>Add python scraper using `pd.read_html()`</s>
+- Split python scaper into separate python file and automate csv generation
 - Create .py file for batch plot generation / update
 - Tableau dashboarding
