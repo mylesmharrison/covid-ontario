@@ -4,6 +4,8 @@ Visualization and tracking of COVID data releases from the Ontario Ministry of H
 
 @author mylesmharrison (myles at mylesharrison dot com)
 
+![summaryplot](./plots/summaryplot_2020-03-29.png)
+
 ### Other Data Sources
 
 This also relies on data gathered by the MIDAS Network, available here: https://github.com/midas-network/COVID-19/tree/master/data/cases/canada/ontario_situation_updates
