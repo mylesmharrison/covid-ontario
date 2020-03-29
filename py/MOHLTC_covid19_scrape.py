@@ -9,6 +9,8 @@ from selenium.common.exceptions import TimeoutException
 
 import re
 import argparse
+from os import path
+from csv import QUOTE_ALL
 
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -51,11 +53,20 @@ def fetch_html() -> str:
     # Return the filename of the written file
     return outputfilename
 
-def process_html_file(filepath: str, outputfilename: str = 'test.csv'):
+def process_html_file(filepath: str, outputfilename: str = None):
     '''
-    Processes the html source and saves
+    Processes the html source and saves the COVID data contained to CSV
+
+    INPUTS:
+        filepath (str) : the relative path of the saved page to process
+        outputfilename (str): the output filename (and path) for the csv
     '''
     
+    # If no outputfilename is specified, use the default
+    if outputfilename is None:
+        filename = path.basename(filepath).split('.')[0]
+        outputfilename = './csv/' + filename + '.csv'
+
     # Read in the file
     f = open(filepath, 'r')
     htmlsource = f.read()
@@ -64,6 +75,9 @@ def process_html_file(filepath: str, outputfilename: str = 'test.csv'):
     # Create soup object
     soup = BeautifulSoup(htmlsource, features="lxml")
     
+    ###################################
+    #### STATUS OF CASES IN ONTARIO ###
+    ###################################
     # Get the status update table
     status_update = pd.read_html(htmlsource)[0]
 
@@ -90,8 +104,13 @@ def process_html_file(filepath: str, outputfilename: str = 'test.csv'):
     st2['retrieved_timestamp'] = pd.to_datetime(datetime.now().replace(microsecond=0)).isoformat()
 
     # Write to csv
-    st2.to_csv(outputfilename, header=True, index=False)
+    st2.to_csv(outputfilename, header=True, index=False, quoting=QUOTE_ALL)
     
+    ###################################
+    ## NEW CONFIRMED POSITIVE CASES ###
+    ###################################
+
+    # TODO - missing on Ministry site since 2020-03-27
 
 def process_html_directory():
     '''
@@ -116,4 +135,4 @@ if __name__ == '__main__':
     else:
         saved_html_path = args.fromfile
 
-    process_html_file(saved_html_path, 'testfile.csv')
+    process_html_file(saved_html_path)
