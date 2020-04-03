@@ -9,6 +9,7 @@ from selenium.common.exceptions import TimeoutException
 
 import re
 import argparse
+import glob
 from os import path
 from csv import QUOTE_ALL
 
@@ -113,27 +114,45 @@ def process_html_file(filepath: str, outputfilename: str = None):
 
     # TODO - missing on Ministry site since 2020-03-27
 
-def process_html_directory():
-    '''
-    TODO: This function will process a whole directory of saved copies of the page and batch output csv
-    '''
+def process_html_directory(dirpath: str, outputpath: str = './csv/'):
 
-    pass
+    # Get path of all HTML files in the directory
+    all_files = glob.glob(dirpath + "*.html")
+
+    for filename in all_files:
+        
+        print(f"Reading {filename}")
+        
+        # Generate the outputfilename 
+        file_basename = path.basename(filename).split('.')[0]
+        outputfilename = outputpath + file_basename + '.csv'
+        
+        # Process the file
+        process_html_file(filename, outputfilename)
+        
+        print(f"Writing {outputfilename}")
 
     
 if __name__ == '__main__':
 
     # Argument parsing
     parser = argparse.ArgumentParser()
+    parser.add_argument("--fetchonly", help="Fetch and save HTML only", action="store_true")
     parser.add_argument("--fromfile", help="Process saved HTML file", type=str)
     parser.add_argument("--processdir", help="Process all saved HTML in a specified directory", type=str)
+    parser.add_argument("--outputdir", help="Path to save csvs for processing directory of HTML", type=str)
     parser.add_argument("--nosavecsv", help="Flag to toggle saving of csv", action="store_true")
     args = parser.parse_args()
 
-    # Get the page and save in the HTML directory
-    if(args.fromfile is None):
-        saved_html_path = fetch_html()    
+    if(args.processdir):
+        # Process directory of saved HTML files in batch
+        process_html_directory(args.processdir, args.outputdir)
     else:
-        saved_html_path = args.fromfile
+        # Otherwise
+        if(args.fromfile is None):
+            # Get the page and save in the HTML directory
+            saved_html_path = fetch_html()    
+        else:
+            saved_html_path = args.fromfile
 
-    process_html_file(saved_html_path)
+        process_html_file(saved_html_path)
