@@ -81,13 +81,14 @@ def process_html_file(filepath: str, outputfilename: str = None):
     # Get the status update table
     status_update = pd.read_html(htmlsource)[0]
 
-    # Get the updated timestamp for the status updates
-    updated_timestamp_p = soup.find(id='pagebody').find_all('p')[4].text.encode('ascii', errors='ignore').decode('utf8')
-    # The below returns in this format, taken from the page: March 28, 2020 at 5:30 p.m. ET
-    updated_timestamp_string = re.search('.*as of(.*)', updated_timestamp_p)[1]
-    # Remove the 'ET'
-    updated_timestamp_string = updated_timestamp_string.rsplit(' ', 1)[0]
-    print(updated_timestamp_string)
+    try:
+        # The below returns in this format, taken from the page: March 28, 2020 at 5:30 p.m. ET
+        updated_timestamp_string = BeautifulSoup(re.search('.*Last\ updated:\ (.*)', htmlsource)[1], features="lxml").text
+        # Remove the 'ET'
+        updated_timestamp_string = updated_timestamp_string.rsplit(' ', 1)[0]
+        print(updated_timestamp_string)
+    except:
+        updated_timestamp_string = ''
     
     # Convert to ISO
     updated_iso = pd.to_datetime(updated_timestamp_string).isoformat()
