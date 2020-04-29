@@ -34,7 +34,7 @@ def fetch_html() -> str:
     # Fetch the page
     try:
         driver = webdriver.Firefox(options=options)
-        driver.get('https://www.ontario.ca/page/2019-novel-coronavirus')
+        driver.get('https://www.ontario.ca/page/how-ontario-is-responding-covid-19#section-0')
         
         # Wait until the 'Status of Cases in Ontario' element has finished loading
         element_present = EC.presence_of_element_located((By.ID, 'section-0'))
